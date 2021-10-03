@@ -86,4 +86,5 @@ while True:
 	DIGITALEC.check_free()
 	STARTBUIS.check_free()
 	TELEVISAI.check_free()
-	time.sleep(90) # Засыпание программы на 3 секунды
+	bot.send_message(354494423,"gay")
+	time.sleep(15) # Засыпание программы на 3 секунды
