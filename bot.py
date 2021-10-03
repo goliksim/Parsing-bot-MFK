@@ -1,4 +1,5 @@
 import os
+import requests
 import telebot
 from flask import Flask , request
 from bs4 import BeautifulSoup # Модуль для работы с HTML
