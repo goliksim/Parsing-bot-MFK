@@ -1,10 +1,6 @@
 import os
-import requests
 import telebot
-from flask import Flask , request
-from bs4 import BeautifulSoup # Модуль для работы с HTML
-import time # Модуль для остановки программы
-import datetime
+from flask import Flask, request
 
 TOKEN = '2001618640:AAE-bA_qXoY878BTKFj3iNFbMFXS8PfBaEE'
 APP_URL = f'https://mfkbot.herokuapp.com/{TOKEN}'
