@@ -1,0 +1,16 @@
+[Unit]
+Description=Telegram bot 'MFKbot'
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/golik19266
+ExecStart=/usr/bin/python3 /home/golik19266/MFKcheck.py
+
+RestartSec=3
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
