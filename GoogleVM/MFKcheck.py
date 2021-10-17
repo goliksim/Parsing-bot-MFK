@@ -7,8 +7,10 @@ import time # Модуль для остановки программы
 import datetime
 import telebot
 
+# 731275374 - мой айди пользователя
+# 354494423 - айди друга
 
-bot = telebot.TeleBot("2001618640:AAE-bA_qXoY878BTKFj3iNFbMFXS8PfBaEE")
+bot = telebot.TeleBot("yourtelebotID")
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
