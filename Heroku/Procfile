@@ -1,1 +1,1 @@
-worker: python MFKcheck.py
+web: python3 bot.py

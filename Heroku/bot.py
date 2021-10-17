@@ -1,35 +1,48 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-import requests # Модуль для обработки URL
+import os
+import requests
+import telebot
+from flask import Flask , request
 from bs4 import BeautifulSoup # Модуль для работы с HTML
 import time # Модуль для остановки программы
 import datetime
-import telebot
 
+TOKEN = '2001618640:AAE-bA_qXoY878BTKFj3iNFbMFXS8PfBaEE'
+APP_URL = f'https://mfkbot.herokuapp.com/{TOKEN}'
+bot = telebot.TeleBot(TOKEN)
 
-bot = telebot.TeleBot("2001618640:AAE-bA_qXoY878BTKFj3iNFbMFXS8PfBaEE")
+server = Flask(__name__)
+
 
 @bot.message_handler(commands=['start'])
-def welcome(message):
-	bot.send_message(message.chat.id, 'Здравствуй')
+def start(message):
+    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
 
 
-@bot.message_handler(content_types=['text'])
-def lalala(message):
-	bot.send_message(message.chat.id,str(message.chat.id))
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo(message):
+    bot.reply_to(message, message.text)
 
 
-#Run
+@server.route('/' + TOKEN, methods=['POST'])
+def get_message():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return '!', 200
 
-# Словарь с ссылками на сайты курсов МФК
+
+@server.route('/')
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url=APP_URL)
+    return '!', 200
+
 Site_Dict = {
     'SQL      '    : 'https://lk.msu.ru/course/view?id=2226',
     'PYTHON   ' : 'https://lk.msu.ru/course/view?id=2387',
 	'DIGITALEC' : 'https://lk.msu.ru/course/view?id=2308',
 	'STARTBUIS' : 'https://lk.msu.ru/course/view?id=2309',
-	'TELEVISAI' : 'https://lk.msu.ru/course/view?id=2360',
-	'POVEDENEC' : 'https://lk.msu.ru/course/view?id=2316'
+	'TELEVISAI' : 'https://lk.msu.ru/course/view?id=2360'
 }
 # Основной класс
 class Free_Places:
@@ -71,36 +84,16 @@ class Free_Places:
 		places = places.split('/')
 		places = [int(i) for i in places]
 		if places[0] < places[1]:
-			#print("Cвободные места на курсе " + self.Name_SITE + " : " + str(places[1] - places[0])+"	")
-			if  places[0]< self.last_places and places[0]>places[1]-5:
-				if self.Name_SITE == 'POVEDENEC':
-					self.send_message(731275374,str("Cвободные места на курсе " + self.Name_SITE + " : " + str(places[1] - places[0])+"     "+ str(self.SITE_LINK)))
-				else:
-					self.send_message(354494423,str("Cвободные места на курсе " + self.Name_SITE + " : " + str(places[1] - places[0])+"	"+ str(self.SITE_LINK)))
-		#else:
-			#print("Мест на " + self.Name_SITE +  " нет	", end='')
-		#print(self.current_places)
+			print("Cвободные места на курсе " + self.Name_SITE + " : " + str(places[1] - places[0])+"	")
+			if not places[0]==self.last_places:
+				self.send_message(str("Cвободные места на курсе " + self.Name_SITE + " : " + str(places[1] - places[0])))
+		else:
+			print("Мест на " + self.Name_SITE +  " нет	", end='')
+		print(self.current_places)
 		self.last_places = places[0]
-	# Отправка
-	def send_message(self,id, text):
-		bot.send_message(id,text)
+	# Отправка почты через SMTP
+	def send_message(self, text):
+		bot.send_message(354494423,text)
 
-# Создание объекта и вызов метода
 if __name__ == '__main__':
-	SQL = Free_Places('SQL      ')
-	PYTHON = Free_Places('PYTHON   ')
-	DIGITALEC = Free_Places('DIGITALEC')
-	#STARTBUIS = Free_Places('STARTBUIS')
-	#TELEVISAI = Free_Places('TELEVISAI')
-	#POVEDENEC = Free_Places('POVEDENEC')
-	while True:
-		now = datetime.datetime.now()
-		#print(str(now.hour)+":"+str(now.minute))
-		SQL.check_free()
-		PYTHON.check_free()
-		DIGITALEC.check_free()
-		#STARTBUIS.check_free()
-		#TELEVISAI.check_free()
-		#POVEDENEC.check_free()
-		time.sleep(3) # Засыпание программы на 3 секунды
-
+    server.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
