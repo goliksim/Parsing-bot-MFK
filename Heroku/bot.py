@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup # Модуль для работы с HTML
 import time # Модуль для остановки программы
 import datetime
 
-TOKEN = '2001618640:AAE-bA_qXoY878BTKFj3iNFbMFXS8PfBaEE'
+TOKEN = "yourtelebotID"
 APP_URL = f'https://mfkbot.herokuapp.com/{TOKEN}'
 bot = telebot.TeleBot(TOKEN)
 
